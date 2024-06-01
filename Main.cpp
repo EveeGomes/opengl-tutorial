@@ -21,7 +21,7 @@ void MainLoop()
 // Removes all the setup that has been used such as SDL, deallocate any memory used
 void CleanUp()
 {
-
+   SDL_Quit();
 }
 
 
