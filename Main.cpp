@@ -1,9 +1,17 @@
 #include "SDL.h"
-#include <stdio.h>
+#include <iostream>
 
 void InitializeProgram()
 {
-   
+   // Initialize SDL:
+   // The subsystem that needs to be initialized is the Video subsystem
+   if (SDL_Init(SDL_INIT_VIDEO) < 0) // if that returns less than zero, exit!
+   {
+      // Print off some message as a goo practice
+      std::cout << "SDL2 could not initialize video subsystem" 
+                << std::endl;
+      exit(1);
+   }
 }
 
 // It'll handle input, do some updates baased on the inputs, and render (which can be broken up into different stages that take place before render per se!)
