@@ -1,6 +1,12 @@
 #include "SDL.h"
 #include <iostream>
 
+// Globals (prefixed with a g)
+int gScreenHeight = 640;
+int gScreenWidth = 480;
+SDL_Window* gGraphicApplicationWindow = nullptr;
+SDL_GLContext gOpenGLContext = nullptr;
+
 void InitializeProgram()
 {
    // Initialize SDL:
@@ -10,6 +16,19 @@ void InitializeProgram()
                 << std::endl;
       exit(1);
    }
+
+   // Create a window
+  gGraphicApplicationWindow = SDL_CreateWindow("OpenGL Window",
+                                                0, 0, 
+                                                gScreenWidth, gScreenHeight,
+                                                SDL_WINDOW_OPENGL);
+
+  if (gGraphicApplicationWindow == nullptr)
+  {
+     std::cout << "SDL_Window was not able to be created"
+               << std::endl;
+     exit(1);
+  }
 }
 
 // It'll handle input, do some updates baased on the inputs, and render (which can be broken up into different stages that take place before render per se!)
