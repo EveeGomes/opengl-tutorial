@@ -7,6 +7,8 @@ int gScreenWidth = 480;
 SDL_Window* gGraphicApplicationWindow = nullptr;
 SDL_GLContext gOpenGLContext = nullptr;
 
+bool gQuit = false; // if true, quit
+
 void InitializeProgram()
 {
    // Initialize SDL:
@@ -32,36 +34,63 @@ void InitializeProgram()
    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
    // Create a window
-  gGraphicApplicationWindow = SDL_CreateWindow("OpenGL Window",
+   gGraphicApplicationWindow = SDL_CreateWindow("OpenGL Window",
                                                 0, 0, 
                                                 gScreenWidth, gScreenHeight,
                                                 SDL_WINDOW_OPENGL);
 
-  if (gGraphicApplicationWindow == nullptr)
-  {
-     std::cout << "SDL_Window was not able to be created"
-               << std::endl;
-     exit(1);
-  }
+   if (gGraphicApplicationWindow == nullptr)
+   {
+      std::cout << "SDL_Window was not able to be created"
+                << std::endl;
+      exit(1);
+   }
 
-  // Setup opengl context
-  gOpenGLContext = SDL_GL_CreateContext(gGraphicApplicationWindow);
-  if (gOpenGLContext)
-  {
-     std::cout << "OpenGL context not available\n";
-     exit(1);
-  }
+   // Setup opengl context
+   gOpenGLContext = SDL_GL_CreateContext(gGraphicApplicationWindow);
+   if (gOpenGLContext)
+   {
+      std::cout << "OpenGL context not available\n";
+      exit(1);
+   }
+}
+
+void Input()
+{
+
+}
+
+void PreDraw()
+{
+
+}
+
+void Draw()
+{
+
 }
 
 // It'll handle input, do some updates baased on the inputs, and render (which can be broken up into different stages that take place before render per se!)
 void MainLoop()
 {
+   while (!gQuit)
+   {
+      Input();
+      
+      PreDraw();
 
+      Draw();
+
+      // Update the screen
+      SDL_GL_SwapWindow(gGraphicApplicationWindow);
+   }
 }
 
 // Removes all the setup that has been used such as SDL, deallocate any memory used
 void CleanUp()
 {
+   // Destroy the SDL window
+   SDL_DestroyWindow(gGraphicApplicationWindow);
    SDL_Quit();
 }
 
