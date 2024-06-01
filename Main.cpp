@@ -2,8 +2,8 @@
 #include <iostream>
 
 // Globals (prefixed with a g)
-int gScreenHeight = 640;
-int gScreenWidth = 480;
+int gScreenHeight = 480;
+int gScreenWidth = 640;
 SDL_Window* gGraphicApplicationWindow = nullptr;
 SDL_GLContext gOpenGLContext = nullptr;
 
@@ -35,7 +35,7 @@ void InitializeProgram()
 
    // Create a window
    gGraphicApplicationWindow = SDL_CreateWindow("OpenGL Window",
-                                                0, 0, 
+                                                10, 40, 
                                                 gScreenWidth, gScreenHeight,
                                                 SDL_WINDOW_OPENGL);
 
@@ -48,7 +48,7 @@ void InitializeProgram()
 
    // Setup opengl context
    gOpenGLContext = SDL_GL_CreateContext(gGraphicApplicationWindow);
-   if (gOpenGLContext)
+   if (gOpenGLContext == nullptr)
    {
       std::cout << "OpenGL context not available\n";
       exit(1);
@@ -57,7 +57,23 @@ void InitializeProgram()
 
 void Input()
 {
-
+   // For handling inputs in SDL, we'll use events
+   SDL_Event e;
+   // constantly pull and see if there are any events here
+   while (SDL_PollEvent(&e) != 0)
+   {
+      // if there's some event to look at, we'll handle it
+      // for now, the only event that we'll handle is if the user exists the program
+      if (e.type == SDL_QUIT)
+      {
+         // "terminate the program"
+         std::cout << "Goodbye!" << std::endl;
+         gQuit = true;
+         // The program will actually continue and run through the gQuit input,
+         // and then terminate out of the MainLoop() so it can get completed
+         // and then it goes to the CleanUp().
+      }
+   }
 }
 
 void PreDraw()
@@ -73,7 +89,7 @@ void Draw()
 // It'll handle input, do some updates baased on the inputs, and render (which can be broken up into different stages that take place before render per se!)
 void MainLoop()
 {
-   while (!gQuit)
+   while (!gQuit) // since it's set to false, ! changes it and it turns true! So when it's set to true in some point of the code, the ! will turn into false and the while exits!
    {
       Input();
       
