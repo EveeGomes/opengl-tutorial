@@ -8,7 +8,7 @@
 Debug/
 ipch/
 x64/
-*.vs/
+.vs/
 
 #tempfiles
 ~$_*.*
