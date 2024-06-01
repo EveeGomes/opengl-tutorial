@@ -1,4 +1,5 @@
 #include "SDL.h"
+#include <glad/glad.h>
 #include <iostream>
 
 // Globals (prefixed with a g)
@@ -8,6 +9,18 @@ SDL_Window* gGraphicApplicationWindow = nullptr;
 SDL_GLContext gOpenGLContext = nullptr;
 
 bool gQuit = false; // if true, quit
+
+// Try to run some opengl function to check if it's properly set
+// Turns out it need to get the opengl library. In the video he suggests using Glad tool.
+// That tool will get us a header that had all the openGL functions provided.
+void GetOpenGLVersionInfo()
+{
+   // Have some cout lines only to check openGL functions. It also works for sending these information for others whenever something isn't working properly
+   std::cout << "Vendor: " << glGetString(GL_VENDOR) << std::endl;
+   std::cout << "Renderder: " << glGetString(GL_RENDERER) << std::endl;
+   std::cout << "Version: " << glGetString(GL_VERSION) << std::endl;
+   std::cout << "Shading Language: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+}
 
 void InitializeProgram()
 {
@@ -53,6 +66,16 @@ void InitializeProgram()
       std::cout << "OpenGL context not available\n";
       exit(1);
    }
+
+   // Initialize the Glad library
+   if (!gladLoadGLLoader(SDL_GL_GetProcAddress)) // loads up a bunch of function pointers and then retrieves their addresses
+   {
+      std::cout << "Glad was not initialized" << std::endl;
+      exit(1);
+   }
+
+   // Call GetOpenGLVersionInfo() to check if the openGL commands are working
+   GetOpenGLVersionInfo();
 }
 
 void Input()
@@ -62,16 +85,11 @@ void Input()
    // constantly pull and see if there are any events here
    while (SDL_PollEvent(&e) != 0)
    {
-      // if there's some event to look at, we'll handle it
-      // for now, the only event that we'll handle is if the user exists the program
       if (e.type == SDL_QUIT)
       {
          // "terminate the program"
          std::cout << "Goodbye!" << std::endl;
          gQuit = true;
-         // The program will actually continue and run through the gQuit input,
-         // and then terminate out of the MainLoop() so it can get completed
-         // and then it goes to the CleanUp().
       }
    }
 }
@@ -89,7 +107,7 @@ void Draw()
 // It'll handle input, do some updates baased on the inputs, and render (which can be broken up into different stages that take place before render per se!)
 void MainLoop()
 {
-   while (!gQuit) // since it's set to false, ! changes it and it turns true! So when it's set to true in some point of the code, the ! will turn into false and the while exits!
+   while (!gQuit)
    {
       Input();
       
