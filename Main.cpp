@@ -4,10 +4,8 @@
 void InitializeProgram()
 {
    // Initialize SDL:
-   // The subsystem that needs to be initialized is the Video subsystem
-   if (SDL_Init(SDL_INIT_VIDEO) < 0) // if that returns less than zero, exit!
+   if (SDL_Init(SDL_INIT_VIDEO) < 0)
    {
-      // Print off some message as a goo practice
       std::cout << "SDL2 could not initialize video subsystem" 
                 << std::endl;
       exit(1);
