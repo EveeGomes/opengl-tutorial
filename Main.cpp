@@ -1,6 +1,7 @@
 #include "SDL.h"
 #include <glad/glad.h>
 #include <iostream>
+#include <vector>
 
 // Globals (prefixed with a g)
 int gScreenHeight = 480;
@@ -9,6 +10,12 @@ SDL_Window* gGraphicApplicationWindow = nullptr;
 SDL_GLContext gOpenGLContext = nullptr;
 
 bool gQuit = false; // if true, quit
+
+// VAO:
+GLuint gVertexArrayObject = 0;
+
+// VBO:
+GLuint gVertexBufferObject = 0;
 
 // Try to run some opengl function to check if it's properly set
 // Turns out it need to get the opengl library. In the video he suggests using Glad tool.
@@ -20,6 +27,58 @@ void GetOpenGLVersionInfo()
    std::cout << "Renderder: " << glGetString(GL_RENDERER) << std::endl;
    std::cout << "Version: " << glGetString(GL_VERSION) << std::endl;
    std::cout << "Shading Language: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+}
+
+// Responsible for getting some vertex data on our GPU
+void VertexSpecification()
+{
+   // The goal here is to create some vertices (so it can be done on the CPU side)
+
+   // Using opengl floats is good practice
+   // Use initialization list to give this vector some values
+   // Lives on the CPU
+   const std::vector<GLfloat> vertexPosition
+   {
+      // x    y     z
+      -0.8f, -0.8f, 0.0f, // vertex 1
+      0.8f, -0.8f, 0.0f,  // vertex 2
+      0.0f, 0.8f, 0.0f    // vertex 3
+   };
+
+   // How to get to the GPU: set a vertex array object (VAO) then a vertex buffer object (VBO) - which will actually contain that vector's data
+
+   // VBA:
+   // 1. Generate the VBA (how many, where to place it - openGL uses an integer to act as a handle into some object)
+   // Declare that object as global variable using opengl unsigned integer
+   glGenVertexArrays(1, &gVertexArrayObject);
+   // 2. Bind the object array. Binding means to select it; it's like saying "use this one that's been just created".
+   glBindVertexArray(gVertexArrayObject);
+   
+   // Start generating the VBO
+   // 1. Generate the VBO
+   // The object is going to be global as well
+   // We're passing the addresses because this is a C based API!!!
+   glGenBuffers(1, &gVertexBufferObject);
+   // 2. Select that buffer by calling the bind function
+   // This function takes 2 parameters and the first one is the target which in docs.gl we can see them and their purpose!
+   glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
+   // 3. Populate with some data: params in docs.gl
+   glBufferData(GL_ARRAY_BUFFER, // target
+                vertexPosition.size() * sizeof(GLfloat), // size - size of our data in BYTES!! How big is the buffer
+                vertexPosition.data(), // pointer to the data - since we're using a vector here we can pass .data() which returns a pointer to the raw array. If it was a regular array just pass in the array
+                GL_STATIC_DRAW); // the last param is an enum that tells how we're gonna use the data - the triagles are gonna change a lot? are they gonna be streamed in? in our case only draw for now
+
+   // Now that we have the data, how do get to that data here:
+   // Enable an attribute
+   glEnableVertexAttribArray(0);
+   // How to use it:
+   glVertexAttribPointer(0,
+                         3, // x, y, z attributes
+                         GL_FLOAT,
+                         GL_FALSE,
+                         0,
+                         (void*)0);
+
 }
 
 void InitializeProgram()
@@ -134,6 +193,11 @@ int main(int argc, char* argv[])
    // Initial steps for having a graphical application:
 
    InitializeProgram();
+
+   VertexSpecification();
+
+   // Responsible for creating a pipeline with a vertex and a fragment shader once we have the actual geometry
+   CreateGraphicsPipeline();
 
    MainLoop();
 
