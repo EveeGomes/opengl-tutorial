@@ -19,9 +19,29 @@ GLuint gVertexBufferObject = 0;
 // Program Object (for our shaders) - another way to say that's our graphics pipeline, something that has a handle to a pipeline that we compile that has the vertex shader and fragment shader
 GLuint gGraphicsPipelineShaderProgram = 0;
 
-GLuint CompileShader(GLuint type, const std::string& Source)
+// Where the actual compilation happens
+GLuint CompileShader(GLuint Type, const std::string& Source)
 {
+   // We want to create a shader object based on which enum we have:
+   GLuint shaderObject;
 
+   if (Type == GL_VERTEX_SHADER)
+   {
+      // Create a vertex shader
+      shaderObject = glCreateShader(GL_VERTEX_SHADER); // these checking steps aren't necessary, it could be only these creation lines, but they help on later debugging!
+   }
+   else if (Type == GL_FRAGMENT_SHADER)
+   {
+      shaderObject = glCreateShader(GL_FRAGMENT_SHADER);
+   }
+
+   // the Source needs to be passed as const char array because the API doesn't have strings!
+   const char* src = Source.c_str(); // get the c string version of the string
+   glShaderSource(shaderObject, 1, &src, nullptr);
+   // Once we have the shader we can now compile the actual shader object itself now that we have the source code there
+   glCompileShader(shaderObject);
+
+   return shaderObject;
 }
 
 // Returns the handle (a GLuint) to the actual GPU shader program
