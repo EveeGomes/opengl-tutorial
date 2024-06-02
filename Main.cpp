@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-// Globals (prefixed with a g)
+// Globals (prefixed with a g) - globals as we're learning
 int gScreenHeight = 480;
 int gScreenWidth = 640;
 SDL_Window* gGraphicApplicationWindow = nullptr;
@@ -18,6 +18,27 @@ GLuint gVertexArrayObject = 0;
 GLuint gVertexBufferObject = 0;
 // Program Object (for our shaders) - another way to say that's our graphics pipeline, something that has a handle to a pipeline that we compile that has the vertex shader and fragment shader
 GLuint gGraphicsPipelineShaderProgram = 0;
+
+// Vertex Shader
+// Vertex shader executes once per vertex, and will be in charge of the final position of the vertex
+const std::string gVertexShaderSource =
+"#version 410 core\n"
+"in vec4 position;\n"
+"void main()\n"
+"{\n"
+"   gl_Position = vec4(position.x, position.y, position.z, position.w);\n"
+"}\n";
+
+// Fragment Shader
+// The fragment shader executes once per fragment (i.e. roughly for every pixel that will be rasterized), and in part determines the final color that will be sent to the screen.
+const std::string gFragmentShaderSource =
+"#version 410 core\n"
+"out vec4 color;\n"
+"void main()\n"
+"{\n"
+"   color = vec4(1.0f, 0.5f, 0.0f, 1.0f);\n"
+"}\n";
+
 
 // Where the actual compilation happens
 GLuint CompileShader(GLuint Type, const std::string& Source)
@@ -72,7 +93,8 @@ void CreateGraphicsPipeline()
 {
    // We need somewhere to hold the graphics pipeline
    // Create the shader
-   gGraphicsPipelineShaderProgram = CreateShaderProgram(vertexShader, fragmentShader); // Create this function above
+   // Since shaders themselves are just text information that we gonna compile (in the CompileShader method in glShaderSource(etc)), we're going to create two global strings
+   gGraphicsPipelineShaderProgram = CreateShaderProgram(gVertexShaderSource, gFragmentShaderSource); // Create this function above
 }
 
 // Try to run some opengl function to check if it's properly set
