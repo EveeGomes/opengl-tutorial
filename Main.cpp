@@ -239,14 +239,33 @@ void Input()
    }
 }
 
+// Responsible for setting opengl state (that's how he suggests to be done, but things can be put into the Draw function as well)
 void PreDraw()
 {
+   // Disable some stuff:
+   glDisable(GL_DEPTH_TEST);
+   glDisable(GL_CULL_FACE);
 
+   // Setup the viewport using the size of screen
+   glViewport(0, 0, gScreenWidth, gScreenHeight);
+   // Background color of our scene:
+   glClearColor(1.f, 1.f, 0.f, 1.f);
+   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+   // Define the pipeline we're using to make it work
+   glUseProgram(gGraphicsPipelineShaderProgram);
 }
 
 void Draw()
 {
+   // Make the Draw call and then the pipeline will be activated
+   // So in order to draw, we gotta figure out which vertex array object are we gonna be using. So we set it up by using the Bind function to select the VAO
+   glBindVertexArray(gVertexArrayObject);
+   // Now, which buffer we wanna draw from:
+   glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
 
+   // Now, issue the draw arrays which is the actual draw call
+   glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 // It'll handle input, do some updates baased on the inputs, and render (which can be broken up into different stages that take place before render per se!)
