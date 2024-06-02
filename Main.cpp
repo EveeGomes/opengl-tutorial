@@ -45,6 +45,7 @@ void VertexSpecification()
       0.0f, 0.8f, 0.0f    // vertex 3
    };
 
+   // Start setting things up on the GPU:
    // How to get to the GPU: set a vertex array object (VAO) then a vertex buffer object (VBO) - which will actually contain that vector's data
 
    // VBA:
@@ -79,6 +80,11 @@ void VertexSpecification()
                          0,
                          (void*)0);
 
+   // Clean up - Close things when we're done
+   // Use the bind function and pass in 0 since we don't want to bind to anything
+   glBindVertexArray(0);
+   // Disable anything we've enabled
+   glDisableVertexAttribArray(0);
 }
 
 void InitializeProgram()
@@ -197,7 +203,7 @@ int main(int argc, char* argv[])
    VertexSpecification();
 
    // Responsible for creating a pipeline with a vertex and a fragment shader once we have the actual geometry
-   CreateGraphicsPipeline();
+   //CreateGraphicsPipeline();
 
    MainLoop();
 
