@@ -2,20 +2,58 @@
 #include <glad/glad.h>
 #include <iostream>
 #include <vector>
+#include <string>
 
 // Globals (prefixed with a g)
 int gScreenHeight = 480;
 int gScreenWidth = 640;
 SDL_Window* gGraphicApplicationWindow = nullptr;
 SDL_GLContext gOpenGLContext = nullptr;
-
 bool gQuit = false; // if true, quit
 
+// In OpenGL GLuint are used as sort of identifiers for some objects because this is a C based API
 // VAO:
 GLuint gVertexArrayObject = 0;
-
 // VBO:
 GLuint gVertexBufferObject = 0;
+// Program Object (for our shaders) - another way to say that's our graphics pipeline, something that has a handle to a pipeline that we compile that has the vertex shader and fragment shader
+GLuint gGraphicsPipelineShaderProgram = 0;
+
+GLuint CompileShader(GLuint type, const std::string& Source)
+{
+
+}
+
+// Returns the handle (a GLuint) to the actual GPU shader program
+// Its job is to take whatever the result of compiling a vertex shader and assembling them in some way
+GLuint CreateShaderProgram(const std::string& vertexShaderSource,
+                           const std::string& fragmentShaderSource)
+{
+   // This is going to be our pipeline. glCreateProgram() returns an empty object which we'll fill in the vertex and fragment shaders
+   GLuint programObject = glCreateProgram();
+   GLuint myVertexShader = CompileShader(GL_VERTEX_SHADER, vertexShaderSource); // create another function (commonly seen in libraries), which takes the type of shader we want to build (as an enum) and the vertex shader source code
+   GLuint myFragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentShaderSource); // same here
+   
+   // Attach the shaders
+   glAttachShader(programObject, myVertexShader);
+   glAttachShader(programObject, myFragmentShader);
+   // Link them together in the program object
+   glLinkProgram(programObject);
+
+   // Validate the program
+   glValidateProgram(programObject);
+   // in another lesson: detach and delete the shader using glDetachShader and glDeleteShader
+
+   return programObject;
+}
+
+// Responsible for creating a pipeline with a vertex and a fragment shader once we have the actual geometry
+void CreateGraphicsPipeline()
+{
+   // We need somewhere to hold the graphics pipeline
+   // Create the shader
+   gGraphicsPipelineShaderProgram = CreateShaderProgram(vertexShader, fragmentShader); // Create this function above
+}
 
 // Try to run some opengl function to check if it's properly set
 // Turns out it need to get the opengl library. In the video he suggests using Glad tool.
@@ -202,8 +240,7 @@ int main(int argc, char* argv[])
 
    VertexSpecification();
 
-   // Responsible for creating a pipeline with a vertex and a fragment shader once we have the actual geometry
-   //CreateGraphicsPipeline();
+   CreateGraphicsPipeline();
 
    MainLoop();
 
