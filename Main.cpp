@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
 
 // VVVVVVVVVVVVVVVVVVVVVVVVVVV Globals (prefixed with a g) - globals as we're learning VVVVVVVVVVVVVVVVVVVVVVVVVVV
 
@@ -74,6 +75,35 @@ const std::string gFragmentShaderSource =
 "   color = vec4(1.0f, 0.5f, 0.0f, 1.0f);\n"
 "}\n";
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Globals ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/** 
+* Free function for now (maybe add some abstraction later)
+* 
+*/
+std::string LoadShaderAsString(const std::string& Filename)
+{
+   // Resulting shader program loaded as a single string
+   std::string Result = "";
+
+   // Read the file line by line
+   std::string Line = "";
+   // Input file to bring in (@param: Read the content as a string)
+   std::ifstream MyFile(Filename.c_str());
+
+   // if the file was found, parse/read one line at a time
+   if (MyFile.is_open())
+   {
+      while (std::getline(MyFile, Line))
+      {
+         // concatenate
+         Result += Line + '\n';
+      }
+      // Close the file before leaving the if statement
+      MyFile.close();
+   }
+
+   return Result;
+}
 
 /** 
 * CompileShader will compile any valid vertex, fragment, geometry,
