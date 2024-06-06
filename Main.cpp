@@ -219,10 +219,14 @@ GLuint CreateShaderProgram(const std::string& vertexShaderSource,
 // Responsible for creating a pipeline with a vertex and a fragment shader once we have the actual geometry
 void CreateGraphicsPipeline()
 {
+   // Instead of loading the source code, we'll read in the files:
+   std::string VertexShaderSource = LoadShaderAsString("");
+   std::string FragmentShaderSource = LoadShaderAsString("");
+
    // We need somewhere to hold the graphics pipeline
    // Create the shader
    // Since shaders themselves are just text information that we gonna compile (in the CompileShader method in glShaderSource(etc)), we're going to create two global strings
-   gGraphicsPipelineShaderProgram = CreateShaderProgram(gVertexShaderSource, gFragmentShaderSource); // Create this function above
+   gGraphicsPipelineShaderProgram = CreateShaderProgram(VertexShaderSource, FragmentShaderSource); // Create this function above
 }
 
 // Try to run some opengl function to check if it's properly set
