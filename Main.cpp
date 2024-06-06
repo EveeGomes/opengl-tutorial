@@ -47,33 +47,6 @@ GLuint gVertexArrayObject = 0;
 GLuint gVertexBufferObject = 0;
 /////////////////////////////////////////////////
 
-/** Shaders */
-/** 
-* Here we setup two shaders, a vertex shader and a fragment shader.
-* At a minimum, every Modern OpenGL program need a vertex and a fragment shader.
-* OpenGL provides functions that will compile the shader source code (which are
-* simply stored as strings) at run-time.
-*/
-
-// Vertex Shader
-// Vertex shader executes once per vertex, and will be in charge of the final position of the vertex
-const std::string gVertexShaderSource =
-"#version 410 core\n"
-"in vec4 position;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(position.x, position.y, position.z, position.w);\n"
-"}\n";
-
-// Fragment Shader
-// The fragment shader executes once per fragment (i.e. roughly for every pixel that will be rasterized), and in part determines the final color that will be sent to the screen.
-const std::string gFragmentShaderSource =
-"#version 410 core\n"
-"out vec4 color;\n"
-"void main()\n"
-"{\n"
-"   color = vec4(1.0f, 0.5f, 0.0f, 1.0f);\n"
-"}\n";
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Globals ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 /** 
@@ -220,8 +193,8 @@ GLuint CreateShaderProgram(const std::string& vertexShaderSource,
 void CreateGraphicsPipeline()
 {
    // Instead of loading the source code, we'll read in the files:
-   std::string VertexShaderSource = LoadShaderAsString("");
-   std::string FragmentShaderSource = LoadShaderAsString("");
+   std::string VertexShaderSource = LoadShaderAsString("./shaders/vert.glsl");
+   std::string FragmentShaderSource = LoadShaderAsString("./shaders/frag.glsl");
 
    // We need somewhere to hold the graphics pipeline
    // Create the shader
