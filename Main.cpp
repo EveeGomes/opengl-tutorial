@@ -45,6 +45,7 @@ GLuint gVertexArrayObject = 0;
 */
 // VBO:
 GLuint gVertexBufferObject = 0;
+GLuint gVertexBufferObject2 = 0; // Create another VBO handle
 /////////////////////////////////////////////////
 
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Globals ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -249,6 +250,14 @@ void VertexSpecification()
       0.0f,   0.8f, 0.0f  // vertex 3 - Top vertex position
    };
 
+   const std::vector<GLfloat> vertexColors
+   {
+      //R     G     B
+      1.0f,  0.0f, 0.0f, // vertex 1 - Left vertex color
+      0.0f,  1.0f, 0.0f, // vertex 2 - Right vertex color
+      0.0f,  0.0f, 1.0f  // vertex 3 - Top vertex color
+   };
+
    // Start setting things up on the GPU:
    // How to get to the GPU: set a vertex array object (VAO) then a vertex buffer object (VBO) - which will actually contain that vector's data
 
@@ -300,11 +309,32 @@ void VertexSpecification()
                          0, // Stride
                          (void*)0); // Offset
 
+
+   // Setup the second VBO with vertex colors
+   glGenBuffers(1, &gVertexBufferObject2);
+   glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject2);
+   glBufferData(GL_ARRAY_BUFFER,
+      vertexColors.size() * sizeof(GL_FLOAT),
+      vertexColors.data(),
+      GL_STATIC_DRAW);
+
+   // Linking up the attributes in our VAO
+   glEnableVertexAttribArray(1);
+   glVertexAttribPointer(1,
+                         3, // r, g, b
+                         GL_FLOAT,
+                         GL_FALSE,
+                         0,
+                         (void*)0);
+
+
    // Clean up - Close things when we're done
    // Use the bind function and pass in 0 since we don't want to bind to anything (Unbind our currently bound VAO)
    glBindVertexArray(0);
    // Disable anything we've enabled (Disable any attributes we opened in our Vertex Attribute Array, as we do not want to leave them open)
    glDisableVertexAttribArray(0);
+   // Disable the second attribute
+   glDisableVertexAttribArray(1);
 }
 
 void InitializeProgram()
