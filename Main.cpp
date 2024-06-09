@@ -49,8 +49,6 @@ GLuint gVertexArrayObject = 0;
 */
 // VBO:
 GLuint gVertexBufferObject = 0;
-GLuint gVertexBufferObject2 = 0; // Create another VBO handle
-/////////////////////////////////////////////////
 
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Globals ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -266,20 +264,15 @@ void VertexSpecification()
    // Using opengl floats is good practice
    // Use initialization list to give this vector some values
    // Lives on the CPU
-   const std::vector<GLfloat> vertexPosition
+   const std::vector<GLfloat> vertexData
    {
       // x    y     z
       -0.8f, -0.8f, 0.0f, // vertex 1 - Left vertex position
-      0.8f,  -0.8f, 0.0f, // vertex 2 - Right vertex position
-      0.0f,   0.8f, 0.0f  // vertex 3 - Top vertex position
-   };
-
-   const std::vector<GLfloat> vertexColors
-   {
-      //R     G     B
-      1.0f,  0.0f, 0.0f, // vertex 1 - Left vertex color
-      0.0f,  1.0f, 0.0f, // vertex 2 - Right vertex color
-      0.0f,  0.0f, 1.0f  // vertex 3 - Top vertex color
+       1.0f,  0.0f, 0.0f, // vertex 1 - Left vertex color
+       0.8f, -0.8f, 0.0f, // vertex 2 - Right vertex position
+       0.0f,  1.0f, 0.0f, // vertex 2 - Right vertex color
+       0.0f,  0.8f, 0.0f, // vertex 3 - Top vertex position
+       0.0f,  0.0f, 1.0f  // vertex 3 - Top vertex color
    };
 
    // Start setting things up on the GPU:
@@ -321,8 +314,8 @@ void VertexSpecification()
    //  'vertexPositions' (which is on the CPU), onto a buffer that will live on 
    //  the GPU!
    glBufferData(GL_ARRAY_BUFFER, // target (kind of buffer we are working with; e.g. GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER)
-                vertexPosition.size() * sizeof(GLfloat), // size - size of our data in BYTES!! How big is the buffer
-                vertexPosition.data(), // (raw array of data) pointer to the data - since we're using a vector here we can pass .data() which returns a pointer to the raw array. If it was a regular array just pass in the array
+                vertexData.size() * sizeof(GLfloat), // size - size of our data in BYTES!! How big is the buffer
+                vertexData.data(), // (raw array of data) pointer to the data - since we're using a vector here we can pass .data() which returns a pointer to the raw array. If it was a regular array just pass in the array
                 GL_STATIC_DRAW); // the last param is an enum that tells how we're gonna use the data - the triagles are gonna change a lot? are they gonna be streamed in? in our case only draw for now
 
    // Now that we have the data, tell opengl 'how' the information in our 
@@ -340,26 +333,20 @@ void VertexSpecification()
                          3, // The number of components (e.g. x, y, z = 3 components/attributes)
                          GL_FLOAT, // Type
                          GL_FALSE, // Is the data normalized
-                         0, // Stride
-                         (void*)0); // Offset
-
-
-   // Setup the second VBO with vertex colors
-   glGenBuffers(1, &gVertexBufferObject2);
-   glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject2);
-   glBufferData(GL_ARRAY_BUFFER,
-                vertexColors.size() * sizeof(GL_FLOAT),
-                vertexColors.data(),
-                GL_STATIC_DRAW);
+                         sizeof(GL_FLOAT)*6, // Stride (how to get to the next component) -> in this example, we have x,y,z and r,g,b as 1 vertex, so we gotta read the x,y,z and hop 3 floats to get to the next vertex's x,y,z information!
+                         (void*)0 // Offset (nothing changes since x,y,z info starts at the 0th position in the VBO)
+                         );
 
    // Linking up the attributes in our VAO
+   // Color information
    glEnableVertexAttribArray(1);
    glVertexAttribPointer(1,
                          3, // r, g, b
                          GL_FLOAT,
                          GL_FALSE,
-                         0,
-                         (void*)0);
+                         sizeof(GL_FLOAT)*6,
+                         (GLvoid*)(sizeof(GL_FLOAT)*3) // Since r,g,b is the "second" information in the vertex, it doesn't start at position 0, so we have to specify how many bytes we gotta jump from the position to the rgb data, in this case 3 floats. So we use: sizeof(GL_FLOAT)*3 instead of 0
+                         );
 
 
    // Clean up - Close things when we're done
