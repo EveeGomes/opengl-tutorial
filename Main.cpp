@@ -22,8 +22,10 @@ bool gQuit = false; // if true, quit
 // Shader
 /** 
 * The following stores the unique id for the graphics pipeline program object 
-* that will be used for our OpenGL draw calls. 
-* Program Object (for our shaders) - another way to say that's our graphics pipeline, something that has a handle to a pipeline that we compile that has the vertex shader and fragment shader
+*  that will be used for our OpenGL draw calls. 
+* Program Object (for our shaders) - another way to say that's our graphics 
+*  pipeline, something that has a handle to a pipeline that we compile that 
+*  has the vertex shader and fragment shader.
 */
 GLuint gGraphicsPipelineShaderProgram = 0;
 
@@ -31,16 +33,18 @@ GLuint gGraphicsPipelineShaderProgram = 0;
 /** 
 * VAO encapsulate all of the items needed to render an object.
 * For example, we may have multiple vertex buffer objects (VBO) related to
-* rendering one object. The VAO allows us to setup the OpenGL state to render
-* that object using the correct layout and correct buffers with one call after being setup.
+*  rendering one object. The VAO allows us to setup the OpenGL state to render
+*  that object using the correct layout and correct buffers with one call after 
+*  being setup.
 * 
-* In OpenGL GLuint are used as sort of identifiers for some objects because this is a C based API.
+* In OpenGL GLuint are used as sort of identifiers for some objects because 
+*  this is a C based API.
 */
 // VAO:
 GLuint gVertexArrayObject = 0;
 
 /** 
-* VBO store information relating to vertices(e.g.positions, normals, textures)
+* VBO store information relating to vertices(e.g.positions, normals, textures).
 * VBOs are our mechanism for arraging geometry on the GPU.
 */
 // VBO:
@@ -51,8 +55,7 @@ GLuint gVertexBufferObject2 = 0; // Create another VBO handle
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Globals ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 /** 
-* Free function for now (maybe add some abstraction later)
-* 
+* Free function for now (maybe add some abstraction later).
 */
 std::string LoadShaderAsString(const std::string& Filename)
 {
@@ -87,9 +90,9 @@ std::string LoadShaderAsString(const std::string& Filename)
 *  CompileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
 * 
 * @param Type: we use 'type' field to determine which shader we are
-*  going to compile
-* @param Source: the shader source code
-* @return id of the shaderObject
+*  going to compile.
+* @param Source: the shader source code.
+* @return id of the shaderObject.
 */
 
 // Where the actual compilation happens
@@ -100,18 +103,23 @@ GLuint CompileShader(GLuint Type, const std::string& Source)
 
    if (Type == GL_VERTEX_SHADER)
    {
-      // Create a vertex shader
-      shaderObject = glCreateShader(GL_VERTEX_SHADER); // these checking steps aren't necessary, it could be only these creation lines, but they help on later debugging!
+      // Create a vertex shader:
+      // these checking steps aren't necessary,it could be only these 
+      //  creation lines, but they help on later debugging!
+      shaderObject = glCreateShader(GL_VERTEX_SHADER); 
    }
    else if (Type == GL_FRAGMENT_SHADER)
    {
+      // Create a fragment shader:
       shaderObject = glCreateShader(GL_FRAGMENT_SHADER);
    }
 
-   // the Source needs to be passed as const char array because the API doesn't have strings!
+   // the Source needs to be passed as const char array because the API 
+   //  doesn't have strings!
    const char* src = Source.c_str(); // get the c string version of the string
    glShaderSource(shaderObject, 1, &src, nullptr);
-   // Once we have the shader we can now compile the actual shader object itself now that we have the source code there
+   // Once we have the shader we can now compile the actual shader object 
+   //  itself now that we have the source code there.
    glCompileShader(shaderObject);
 
    /** Error checking */
@@ -159,19 +167,26 @@ GLuint CompileShader(GLuint Type, const std::string& Source)
 * @return id of the program object
 */
 
-// Returns the handle (a GLuint) to the actual GPU shader program
-// Its job is to take whatever the result of compiling a vertex shader and assembling them in some way
+// Returns the handle (a GLuint) to the actual GPU shader program.
+// Its job is to take whatever the result of compiling a vertex shader and 
+//  assembling them in some way.
 GLuint CreateShaderProgram(const std::string& vertexShaderSource,
                            const std::string& fragmentShaderSource)
 {
-   // This is going to be our pipeline. glCreateProgram() returns an empty object which we'll fill in the vertex and fragment shaders
+   // This is going to be our pipeline. glCreateProgram() returns an empty 
+   //  object which we'll fill in the vertex and fragment shaders.
    // Create a new program object:
    GLuint programObject = glCreateProgram();
    // Compile our shaders:
-   GLuint myVertexShader = CompileShader(GL_VERTEX_SHADER, vertexShaderSource); // create another function (commonly seen in libraries), which takes the type of shader we want to build (as an enum) and the vertex shader source code
+   // Create another function (commonly seen in libraries), which takes the 
+   //  type of shader we want to build (as an enum) and the vertex shader 
+   //  source code.
+   GLuint myVertexShader = CompileShader(GL_VERTEX_SHADER, vertexShaderSource);
    GLuint myFragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentShaderSource); // same here
    
-   // Attach the shaders (Link our two shader programs together. Consider this the equivalent of taking two .cpp files, and linking them into one executable file)
+   // Attach the shaders (Link our two shader programs together. 
+   //  Consider this the equivalent of taking two .cpp files, and linking them 
+   //  into one executable file).
    glAttachShader(programObject, myVertexShader);
    glAttachShader(programObject, myFragmentShader);
    // Link them together in the program object
@@ -180,7 +195,8 @@ GLuint CreateShaderProgram(const std::string& vertexShaderSource,
    // Validate the program
    glValidateProgram(programObject);
    
-   // Once our final program object has been created, we can detach and then delete our individual shaders.
+   // Once our final program object has been created, we can detach and then 
+   //  delete our individual shaders.
    glDetachShader(programObject, myVertexShader);
    glDetachShader(programObject, myFragmentShader);
    // Delete the individual shaders once we are done
@@ -190,7 +206,8 @@ GLuint CreateShaderProgram(const std::string& vertexShaderSource,
    return programObject;
 }
 
-// Responsible for creating a pipeline with a vertex and a fragment shader once we have the actual geometry
+// Responsible for creating a pipeline with a vertex and a fragment shader 
+//  once we have the actual geometry.
 void CreateGraphicsPipeline()
 {
    // Instead of loading the source code, we'll read in the files:
@@ -199,16 +216,22 @@ void CreateGraphicsPipeline()
 
    // We need somewhere to hold the graphics pipeline
    // Create the shader
-   // Since shaders themselves are just text information that we gonna compile (in the CompileShader method in glShaderSource(etc)), we're going to create two global strings
-   gGraphicsPipelineShaderProgram = CreateShaderProgram(VertexShaderSource, FragmentShaderSource); // Create this function above
+   // Since shaders themselves are just text information that we gonna compile 
+   //  (in the CompileShader method in glShaderSource(etc)), we're going to 
+   //  create two global strings.
+   gGraphicsPipelineShaderProgram = CreateShaderProgram(VertexShaderSource, 
+                                                        FragmentShaderSource);
 }
 
-// Try to run some opengl function to check if it's properly set
-// Turns out it need to get the opengl library. In the video he suggests using Glad tool.
+// Try to run some opengl function to check if it's properly set.
+// Turns out it need to get the opengl library. In the video he suggests using 
+// Glad tool.
 // That tool will get us a header that had all the openGL functions provided.
 void GetOpenGLVersionInfo()
 {
-   // Have some cout lines only to check openGL functions. It also works for sending these information for others whenever something isn't working properly
+   // Have some cout lines only to check openGL functions. It also works for 
+   //  sending these information for others whenever something isn't working 
+   //  properly.
    std::cout << "Vendor: " << glGetString(GL_VENDOR) << std::endl;
    std::cout << "Renderder: " << glGetString(GL_RENDERER) << std::endl;
    std::cout << "Version: " << glGetString(GL_VERSION) << std::endl;
@@ -237,7 +260,8 @@ void VertexSpecification()
    *  (GPU) related functions are packed closer together versus CPU operations.
    */
 
-   // The goal here is to create some vertices (so it can be done on the CPU side)
+   // The goal here is to create some vertices (so it can be done on the CPU 
+   //  side).
 
    // Using opengl floats is good practice
    // Use initialization list to give this vector some values
@@ -259,46 +283,56 @@ void VertexSpecification()
    };
 
    // Start setting things up on the GPU:
-   // How to get to the GPU: set a vertex array object (VAO) then a vertex buffer object (VBO) - which will actually contain that vector's data
+   // How to get to the GPU: set a vertex array object (VAO) then a vertex 
+   //  buffer object (VBO) - which will actually contain the vector's data.
 
    /** 
    * Vertex Arrays Object (VAO) Setup:
-   * Note: we can think of the VAO as a 'wrapper aroung' all of the VBOs,
+   * Note: we can think of the VAO as a 'wrapper around' all of the VBOs,
    *  in the sense that it encapsulates all VBO state that we are setting up.
    *  Thus, it's also important that we glBindVertexArray (i.e. select the
    *  VAO we want to use) before our VBO operations.
    */
 
    // VAO:
-   // 1. Generate the VAO (how many, where to place it - openGL uses an integer to act as a handle into some object)
+   // 1. Generate the VAO (how many, where to place it - openGL uses an integer 
+   //  to act as a handle into some object).
    // Declare that object as global variable using opengl unsigned integer
    glGenVertexArrays(1, &gVertexArrayObject);
-   // 2. Bind the object array. Binding means to select it; it's like saying "use this one that's been just created".
+   // 2. Bind the object array. Binding means to select it.
+   //  It's like saying "use this one that's been just created".
    glBindVertexArray(gVertexArrayObject);
    
 
    // Start generating the Vertex Buffer Object (VBO)
    // 1. Generate/create a new VBO
-   // Note: we'll see this pattern of code often in opengl of creating and biding to a buffer
-   // The object is going to be global as well
+   // Note: we'll see this pattern of code often in opengl of creating and 
+   //  biding to a buffer.
+   // The object is going to be global as well.
    // We're passing the addresses because this is a C based API!!!
    glGenBuffers(1, &gVertexBufferObject);
-   // 2. Select that buffer by calling the bind function ('selecting the active buffer object' that we want to work with in opengl)
-   // This function takes 2 parameters and the first one is the target which in docs.gl we can see them and their purpose!
+   // 2. Select that buffer by calling the bind function ('selecting the active 
+   //  buffer object' that we want to work with in opengl).
+   // This function takes 2 parameters and the first one is the target which in 
+   //  docs.gl we can see them and their purpose!
    glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
    // 3. Populate with some data: params in docs.gl
-   // As we have this currently binded buffer, we populate the data from our 'vertexPositions' (which is on the CPU), onto a buffer that will live on the GPU!
+   // As we have this currently binded buffer, we populate the data from our 
+   //  'vertexPositions' (which is on the CPU), onto a buffer that will live on 
+   //  the GPU!
    glBufferData(GL_ARRAY_BUFFER, // target (kind of buffer we are working with; e.g. GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER)
                 vertexPosition.size() * sizeof(GLfloat), // size - size of our data in BYTES!! How big is the buffer
                 vertexPosition.data(), // (raw array of data) pointer to the data - since we're using a vector here we can pass .data() which returns a pointer to the raw array. If it was a regular array just pass in the array
                 GL_STATIC_DRAW); // the last param is an enum that tells how we're gonna use the data - the triagles are gonna change a lot? are they gonna be streamed in? in our case only draw for now
 
-   // Now that we have the data, tell opengl 'how' the information in our buffer will be used:
+   // Now that we have the data, tell opengl 'how' the information in our 
+   //  buffer will be used:
+
    // Enable an attribute
    glEnableVertexAttribArray(0);
    /** 
    * For the specific attribute in our vertex specification, we use
-   *  'glVertexAttribPointer' to figure our how we are going to move
+   *  'glVertexAttribPointer' to figure out how we are going to move
    *  through the data.
    */
    // How to use it:
@@ -314,9 +348,9 @@ void VertexSpecification()
    glGenBuffers(1, &gVertexBufferObject2);
    glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject2);
    glBufferData(GL_ARRAY_BUFFER,
-      vertexColors.size() * sizeof(GL_FLOAT),
-      vertexColors.data(),
-      GL_STATIC_DRAW);
+                vertexColors.size() * sizeof(GL_FLOAT),
+                vertexColors.data(),
+                GL_STATIC_DRAW);
 
    // Linking up the attributes in our VAO
    glEnableVertexAttribArray(1);
@@ -329,9 +363,11 @@ void VertexSpecification()
 
 
    // Clean up - Close things when we're done
-   // Use the bind function and pass in 0 since we don't want to bind to anything (Unbind our currently bound VAO)
+   // Use the bind function and pass in 0 since we don't want to bind to 
+   //  anything (Unbind our currently bound VAO).
    glBindVertexArray(0);
-   // Disable anything we've enabled (Disable any attributes we opened in our Vertex Attribute Array, as we do not want to leave them open)
+   // Disable anything we've enabled (Disable any attributes we opened in 
+   //  our Vertex Attribute Array, as we do not want to leave them open).
    glDisableVertexAttribArray(0);
    // Disable the second attribute
    glDisableVertexAttribArray(1);
@@ -347,18 +383,21 @@ void InitializeProgram()
       exit(1);
    }
 
-   // After initializing SDL and before creating the window, set some opengl properties/attributes
+   // After initializing SDL and before creating the window, set some opengl 
+   //  properties/attributes.
    
    // Set version 4.1 (working on Mac, Linux, Windows)
    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
-   // Use PROFILE_CORE because it disables deprecated functions which guarantees old and unsupported functions won't get used
+   // Use PROFILE_CORE because it disables deprecated functions which guarantees
+   //  old and unsupported functions won't get used
    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
    // Double buffering allows for smoother transition of things
    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-   // Depth buffer gets 24 bits so we get more precision when determining objects or overlapping 
+   // Depth buffer gets 24 bits so we get more precision when determining
+   //  objects or overlapping.
    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
    // Create a window
@@ -377,7 +416,8 @@ void InitializeProgram()
       exit(1);
    }
 
-   // Setup OpenGL Graphics Context (a big opengl object that encapsulates everything)
+   // Setup OpenGL Graphics Context (a big opengl object that encapsulates 
+   //  everything).
    gOpenGLContext = SDL_GL_CreateContext(gGraphicApplicationWindow);
    if (gOpenGLContext == nullptr)
    {
@@ -388,7 +428,9 @@ void InitializeProgram()
    }
 
    // Initialize the Glad library
-   if (!gladLoadGLLoader(SDL_GL_GetProcAddress)) // loads up a bunch of function pointers and then retrieves their addresses
+   if (!gladLoadGLLoader(SDL_GL_GetProcAddress)) // loads up a bunch of function 
+                                                 //  pointers and then retrieves
+                                                 //  their addresses.
    {
       std::cout << "Glad was not initialized" << std::endl;
       exit(1);
@@ -420,7 +462,8 @@ void Input()
 * @return void
 */
 
-// Responsible for setting opengl state (that's how he suggests to be done, but things can be put into the Draw function as well)
+// Responsible for setting opengl state (that's how he suggests to be done, 
+//  but things can be put into the Draw function as well).
 void PreDraw()
 {
    // Disable depth test and face culling
@@ -443,15 +486,17 @@ void PreDraw()
 
 void Draw()
 {
-   // Make the Draw call and then the pipeline will be activated
-   // So in order to draw, we gotta figure out which vertex array object are we gonna be using. So we set it up by using the Bind function to select the VAO
+   // Make the Draw call and then the pipeline will be activated.
+   // So in order to draw, we gotta figure out which vertex array object 
+   //  are we gonna be using. So we set it up by using the Bind function to 
+   //  select the VAO.
    // Enable our attributes
    glBindVertexArray(gVertexArrayObject);
    // Now, which buffer we wanna draw from
    // Select the vertex buffer object we want to enable
    glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
 
-   // Now, issue the draw arrays which is the actual draw call
+   // Now, issue the draw arrays which is the actual draw call.
    // Render data
    glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -460,7 +505,9 @@ void Draw()
    glUseProgram(0);
 }
 
-// It'll handle input, do some updates baased on the inputs, and render (which can be broken up into different stages that take place before render per se!)
+// It'll handle input, do some updates based on the inputs, and render 
+//  (which can be broken up into different stages that take place before render 
+//  per se!).
 void MainLoop()
 {
    // While application is running
@@ -469,7 +516,8 @@ void MainLoop()
       // Handle input
       Input();
       
-      // Setup anything (i.e. OpenGL State) that needs to take place before draw calls
+      // Setup anything (i.e. OpenGL State) that needs to take place before draw
+      //  calls.
       PreDraw();
 
       // Draw calls in OpenGL
@@ -480,7 +528,8 @@ void MainLoop()
    }
 }
 
-// Removes all the setup that has been used such as SDL, deallocate any memory used
+// Removes all the setup that has been used such as SDL, deallocate any memory 
+//  used.
 void CleanUp()
 {
    // Destroy the SDL window
