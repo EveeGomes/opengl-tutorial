@@ -266,13 +266,28 @@ void VertexSpecification()
    // Lives on the CPU
    const std::vector<GLfloat> vertexData
    {
+      /** 
+      * The order in which the vertices are written don't really matter.
+      * However, it'll follow a clockwise order so if in the 1st triangle it
+      *  starts from the BL vertex, it'll then go to the BL and then TL.
+      * That's called the "Winding order" which is the direction that our
+      *  vertices are laid out.
+      */
       // x    y     z
-      -0.8f, -0.8f, 0.0f, // vertex 1 - Left vertex position
-       1.0f,  0.0f, 0.0f, // vertex 1 - Left vertex color
-       0.8f, -0.8f, 0.0f, // vertex 2 - Right vertex position
-       0.0f,  1.0f, 0.0f, // vertex 2 - Right vertex color
-       0.0f,  0.8f, 0.0f, // vertex 3 - Top vertex position
-       0.0f,  0.0f, 1.0f  // vertex 3 - Top vertex color
+      // First triangle
+      -0.5f, -0.5f, 0.0f, // vertex 1 - Bottom Left vertex position
+       1.0f,  0.0f, 0.0f, // vertex 1 - BL Color
+       0.5f, -0.5f, 0.0f, // vertex 2 - Bottom Right vertex position
+       0.0f,  1.0f, 0.0f, // vertex 2 - BR Color
+      -0.5f,  0.5f, 0.0f, // vertex 3 - Top Left vertex position
+       0.0f,  0.0f, 1.0f, // vertex 3 - TL Color
+       // Second triangle
+       0.5f, -0.5f, 0.0f, // vertex 1 - Bottom Right vertex position
+       0.0f,  1.0f, 0.0f, // vertex 1 - BR Color
+       0.5f,  0.5f, 0.0f, // vertex 2 - Top Right vertex position
+       1.0f,  0.0f, 0.0f, // vertex 2 - TR Color
+      -0.5f,  0.5f, 0.0f, // vertex 3 - Top Left vertex position
+       0.0f,  0.0f, 1.0f  // vertex 3 - TL Color
    };
 
    // Start setting things up on the GPU:
@@ -485,7 +500,10 @@ void Draw()
 
    // Now, issue the draw arrays which is the actual draw call.
    // Render data
-   glDrawArrays(GL_TRIANGLES, 0, 3);
+   // @param: what kind of primitive to render
+   // @param: the starting index in the enabled array
+   // @param: the number of indices to be rendered
+   glDrawArrays(GL_TRIANGLES, 0, 6);
 
    // Stop using our current graphics pipeline
    // Note: this is not necessary if we only have one graphics pipeline
