@@ -5,7 +5,7 @@
 #include <string>
 #include <fstream>
 
-// VVVVVVVVVVVVVVVVVVVVVVVVVVV Globals (prefixed with a g) - globals as we're learning VVVVVVVVVVVVVVVVVVVVVVVVVVV
+// VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV Globals VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
 /** Setting up SDL */
 // Screen Dimensions
@@ -16,7 +16,6 @@ SDL_GLContext gOpenGLContext = nullptr;
 
 // Main loop flag
 bool gQuit = false; // if true, quit
-/////////////////////////////////////////////////
 
 /** Pipeline */
 // Shader
@@ -50,7 +49,58 @@ GLuint gVertexArrayObject = 0;
 // VBO:
 GLuint gVertexBufferObject = 0;
 
-// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Globals ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Globals ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+// VVVVVVVVVVVVVVVVVVVVVVVVVV Error Handling Routines VVVVVVVVVVVVVVVVVVVVVVVVVV
+
+/** 
+* GLClearAllErrors() is static so it's limited to this file (not strictly 
+*  necessary).
+*/
+static void GLClearAllErrors()
+{
+   // Consecutively call glGetError over and over again until it's in a state
+   //  that is clear, that is there's no errors here. 
+   while (glGetError() != GL_NO_ERROR) {}
+}
+
+/** 
+* @return true if an error occurs.
+*/
+static bool GLCheckErrorStatus()
+{
+   // glGetError() returns a GLenum:
+   while (GLenum error = glGetError())
+   {
+      // so, if we retrieve an error, return our status
+      std::cout << "OpenGL Error: " << error << std::endl;
+      return true;
+   }
+   return false;
+}
+
+/**
+* Those functions should be used together. We'd have to call the clear function
+*  and then check the error status, but only after we make a function call.
+* So programmers normally create different kinds of macros to handle this.
+*
+* @param x The function to be called
+* Then, call the clear function,
+*  then do the function call x,
+*  and then check for the errors
+* 
+* That macro is an error checker.
+* To use it, we would go to where we might have the problem (in the lesson he
+*  shows the quad isn't being drawn, so he goes to the Draw() method and wrap
+*  some calls into the macro:
+*     GLCheck(glBindVertexArray(gVertexArrayObject);)
+*     GLCheck(glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);)
+*     GLCheck(glDrawElements(GL_TRIANGLES, 6, GL_INT, 0);)
+*/
+
+#define GLCheck(x) GLClearAllErrors(); x; GLCheckErrorStatus();
+
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^ Error Handling Routines ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 /** 
 * LoadShaderAsString takes a filepath as an argument and will read line by line
