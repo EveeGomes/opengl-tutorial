@@ -65,15 +65,22 @@ static void GLClearAllErrors()
 }
 
 /** 
+* Improve the function by adding more information:
+* @param Function The actual function call
+* @param Line The line number. We would use the macro __LINE__
 * @return true if an error occurs.
+* 
 */
-static bool GLCheckErrorStatus()
+static bool GLCheckErrorStatus(const char* Function, int Line)
 {
    // glGetError() returns a GLenum:
    while (GLenum error = glGetError())
    {
       // so, if we retrieve an error, return our status
-      std::cout << "OpenGL Error: " << error << std::endl;
+      std::cout << "OpenGL Error: " << error 
+                << "\tLine: " << Line 
+                << "\tFunction: " << Function 
+                << std::endl;
       return true;
    }
    return false;
@@ -97,8 +104,8 @@ static bool GLCheckErrorStatus()
 *     GLCheck(glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);)
 *     GLCheck(glDrawElements(GL_TRIANGLES, 6, GL_INT, 0);)
 */
-
-#define GLCheck(x) GLClearAllErrors(); x; GLCheckErrorStatus();
+// To pass the arguments to GLCheckErrorStatus, use # since it's a little string
+#define GLCheck(x) GLClearAllErrors(); x; GLCheckErrorStatus(#x, __LINE__);
 
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^ Error Handling Routines ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
