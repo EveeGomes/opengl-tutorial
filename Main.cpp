@@ -53,7 +53,13 @@ GLuint gVertexBufferObject = 0;
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Globals ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 /** 
-* Free function for now (maybe add some abstraction later).
+* LoadShaderAsString takes a filepath as an argument and will read line by line
+*  a file and return a string that is meant to be compiled at runtime for a
+*  vertex, fragment, geometry, tesselation, or computer shader.
+* E.g.
+*  LoadShaderAsString("./shaders/filepath");
+* @param Filename Path to the shader file
+* @return Entire file stored as a single string
 */
 std::string LoadShaderAsString(const std::string& Filename)
 {
