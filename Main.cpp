@@ -346,21 +346,19 @@ void VertexSpecification()
       *  the direction the fingers curl.
       *
       */
-      // x    y     z
-      // First triangle
-      -0.5f, -0.5f, 0.0f, // vertex 1 - Bottom Left vertex position
-       1.0f,  0.0f, 0.0f, // vertex 1 - BL Color
-       0.5f, -0.5f, 0.0f, // vertex 2 - Bottom Right vertex position
-       0.0f,  1.0f, 0.0f, // vertex 2 - BR Color
-      -0.5f,  0.5f, 0.0f, // vertex 3 - Top Left vertex position
-       0.0f,  0.0f, 1.0f, // vertex 3 - TL Color
-       // Second triangle
-       0.5f, -0.5f, 0.0f, // vertex 1 - Bottom Right vertex position
-       0.0f,  1.0f, 0.0f, // vertex 1 - BR Color
-       0.5f,  0.5f, 0.0f, // vertex 2 - Top Right vertex position
-       1.0f,  0.0f, 0.0f, // vertex 2 - TR Color
-      -0.5f,  0.5f, 0.0f, // vertex 3 - Top Left vertex position
-       0.0f,  0.0f, 1.0f  // vertex 3 - TL Color
+      // x     y     z
+      // 0 - Vertex
+      -0.5f, -0.5f, 0.0f, // Bottom Left vertex position
+       1.0f,  0.0f, 0.0f, // BL Color
+      // 1 - Vertex
+       0.5f, -0.5f, 0.0f, // Bottom Right vertex position
+       0.0f,  1.0f, 0.0f, // BR Color
+      // 2 - Vertex
+      -0.5f,  0.5f, 0.0f, // Top Left vertex position
+       0.0f,  0.0f, 1.0f, // TL Color
+      // 3 - Vertex
+       0.5f,  0.5f, 0.0f, // Top Right vertex position
+       1.0f,  0.0f, 0.0f, // TR Color
    };
 
    // Start setting things up on the GPU:
