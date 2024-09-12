@@ -331,10 +331,20 @@ void VertexSpecification()
    {
       /** 
       * The order in which the vertices are written don't really matter.
-      * However, it'll follow a clockwise order so if in the 1st triangle it
-      *  starts from the BL vertex, it'll then go to the BL and then TL.
+      * However, it'll follow a counterclockwise (CCW) order so if in the
+      *  1st triangle it starts from the BL vertex, it'll then go to the 
+      *  BR and then TL.
       * That's called the "Winding order" which is the direction that our
-      *  vertices are laid out.
+      *  vertices are laid out. It tells which direction is the front of
+      *  the triangle. In this example, the triangle is facing out towards 
+      *  us as the user.
+      * OpenGL follows the right-hand coordinate system:
+      *  thumb:  x
+      *  index:  y
+      *  middle: z
+      * Also, to tell the winding order, we use the right hand and check
+      *  the direction the fingers curl.
+      *
       */
       // x    y     z
       // First triangle
