@@ -284,8 +284,8 @@ void CreateGraphicsPipeline()
                                                         FragmentShaderSource);
 }
 
-// Try to run some opengl function to check if it's properly set.
-// Turns out it need to get the opengl library. In the video he suggests using 
+// Try to run some opengl functions to check if it's properly set.
+// Turns out it needs to get the opengl library. In the video he suggests using 
 // Glad tool.
 // That tool will get us a header that had all the openGL functions provided.
 void GetOpenGLVersionInfo()
@@ -563,9 +563,9 @@ void Draw()
 
    // Now, issue the draw arrays which is the actual draw call.
    // Render data
-   // @param: what kind of primitive to render
-   // @param: the starting index in the enabled array
-   // @param: the number of indices to be rendered
+   // @mode: what kind of primitive to render
+   // @first: the starting index in the enabled array
+   // @count: the number of indices to be rendered
    glDrawArrays(GL_TRIANGLES, 0, 6);
 
    // Stop using our current graphics pipeline
