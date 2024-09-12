@@ -46,7 +46,19 @@ ipch/
 !?*.[Cc]ache/
 
 # Visual Studio 2015/2017 cache/options directory
-*.vs/
+# *.vs/
+
+
+.vscode
+.vs
+*.VC.db
+*.opensdf
+*.opendb
+*.sdf
+*.sln
+*.suo
+*.xcodeproj
+*.xcworkspace
 
 #tempfiles
 ~$_*.*
