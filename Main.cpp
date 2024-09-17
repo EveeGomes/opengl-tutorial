@@ -49,6 +49,12 @@ GLuint gVertexArrayObject = 0;
 // VBO:
 GLuint gVertexBufferObject = 0;
 
+/** Index Buffer Object(IBO) 
+* This is used to store the array of indices that we want to draw from, when we
+*  do indexed drawing.
+*/
+GLuint gIndexBufferObject = 0;
+
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Globals ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 // VVVVVVVVVVVVVVVVVVVVVVVVVV Error Handling Routines VVVVVVVVVVVVVVVVVVVVVVVVVV
@@ -402,10 +408,38 @@ void VertexSpecification()
    glBufferData(GL_ARRAY_BUFFER, // target (kind of buffer we are working with; e.g. GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER)
                 vertexData.size() * sizeof(GLfloat), // size - size of our data in BYTES!! How big is the buffer
                 vertexData.data(), // (raw array of data) pointer to the data - since we're using a vector here we can pass .data() which returns a pointer to the raw array. If it was a regular array just pass in the array
-                GL_STATIC_DRAW); // the last param is an enum that tells how we're gonna use the data - the triagles are gonna change a lot? are they gonna be streamed in? in our case only draw for now
-
+                GL_STATIC_DRAW // the last param is an enum that tells how we're gonna use the data - the triagles are gonna change a lot? are they gonna be streamed in? in our case only draw for now
+               );
    // Now that we have the data, tell opengl 'how' the information in our 
    //  buffer will be used:
+
+   /** 
+   * Now, as we've removed repeated data from vertexData, the VBO will have less data stored as well, and to be able to use those data we'll need to set
+   *  an Index Buffer Object (IBO) or Element Buffer Object (EBO) that consists of indices of elements in the VBO. The goal of this IBO is to select
+   *  indices to draw a shape (in our case a triangle), but respecting the winding order!
+   * For example, we could have an IBO as: 2, 0, 1, 3, 2, 1. There are many orders that could work as well.
+   * This is a way of preventing sending too much information to the GPU.
+   * 
+   * Set the Index Buffer Object (IBO i.e. EBO)
+   */
+   
+   /** 
+   * Before step 3, we need to have data to send to the glBufferData function.
+   * Since this is an Index buffer object, we'll use a vector of GLunint.
+   * As for our convinience, we can use the initializing list and send the indices we've decided to use above.
+   */
+   const std::vector<GLuint> indexBufferData{ 2,0,1,3,2,1 };
+
+   // 1. Generate a buffer, an IBO
+   glGenBuffers(1, &gIndexBufferObject);
+   // 2. Bind it
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIndexBufferObject);
+   // 3. Populate the buffer with some data. This essentially shipping data to the GPU!
+   glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                indexBufferData.size() * sizeof(GLuint),
+                indexBufferData.data(),
+                GL_STATIC_DRAW
+               );
 
    // Enable an attribute
    glEnableVertexAttribArray(0);
