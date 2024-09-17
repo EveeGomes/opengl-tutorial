@@ -603,12 +603,15 @@ void Draw()
    // Select the vertex buffer object we want to enable
    glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
 
-   // Now, issue the draw arrays which is the actual draw call.
-   // Render data
-   // @mode: what kind of primitive to render
-   // @first: the starting index in the enabled array
-   // @count: the number of indices to be rendered
-   glDrawArrays(GL_TRIANGLES, 0, 6);
+   /** 
+   * As we're now using IBO, we need to draw differently!
+   * Instead of using glDrawArrays, we'll use glDrawElements to render data!
+   */
+   glDrawElements(GL_TRIANGLES,
+                  6,
+                  GL_UNSIGNED_INT,
+                  0
+                 );
 
    // Stop using our current graphics pipeline
    // Note: this is not necessary if we only have one graphics pipeline
