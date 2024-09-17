@@ -60,8 +60,17 @@ GLuint gIndexBufferObject = 0;
 // VVVVVVVVVVVVVVVVVVVVVVVVVV Error Handling Routines VVVVVVVVVVVVVVVVVVVVVVVVVV
 
 /** 
+* From https://www.youtube.com/watch?v=uTidLlObMMw&list=PLvv0ScY6vfd9zlZkIIqGDeG5TUWswkMox&index=17&ab_channel=MikeShah
+* Working with glGetError(), which returns the value of the error flag. See @https://docs.gl/gl4/glGetError
+* It looks at the openGL state machine and reports any errors to us.
+* This function however only gets cleaned out to record another error, once it's called. Therefore we'll need some routine that
+*  sort of clears this error state:
+*/
+
+/** 
 * GLClearAllErrors() is static so it's limited to this file (not strictly 
 *  necessary).
+* It'll constinuously call glGetError so it gets cleared out and can report another error if any, until there's no more errors.
 */
 static void GLClearAllErrors()
 {
@@ -71,11 +80,10 @@ static void GLClearAllErrors()
 }
 
 /** 
-* Improve the function by adding more information:
+* Improve the function by adding more information that can be visualized in the output:
 * @param Function The actual function call
 * @param Line The line number. We would use the macro __LINE__
 * @return true if an error occurs.
-* 
 */
 static bool GLCheckErrorStatus(const char* Function, int Line)
 {
