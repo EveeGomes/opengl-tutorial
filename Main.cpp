@@ -55,11 +55,19 @@ GLuint gVertexArrayObject = 0;
 // VBO:
 GLuint gVertexBufferObject = 0;
 
-/** Index Buffer Object(IBO) 
+/** 
+* Index Buffer Object(IBO) 
 * This is used to store the array of indices that we want to draw from, when we
 *  do indexed drawing.
 */
 GLuint gIndexBufferObject = 0;
+
+/**
+* Shaders
+* Here we setup two shaders, a vertex shader and a fragment shader.
+* At a minimum, every Modern OpenGL program needs a vertex and a fragment shader.
+*/
+float g_uOffset = 0.0f;
 
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Globals ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -580,11 +588,13 @@ void Input()
    const Uint8* state = SDL_GetKeyboardState(NULL);
    if (state[SDL_SCANCODE_UP])
    {
-
+      g_uOffset += 0.01f;
+      std::cout << "g_uOffset: " << g_uOffset << std::endl;
    }
    if (state[SDL_SCANCODE_DOWN])
    {
-
+      g_uOffset -= 0.01f;
+      std::cout << "g_uOffset: " << g_uOffset << std::endl;
    }
 }
 /**
