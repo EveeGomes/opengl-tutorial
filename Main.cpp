@@ -1,16 +1,14 @@
+// Third Party Libraries
 #include "SDL.h"
 #include <glad/glad.h>
+#include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
+
+// C++ Standard Libraries
 #include <iostream>
 #include <vector>
 #include <string>
 #include <fstream>
-
-// Include all GLM core / GLSL features
-#include <glm/glm.hpp> // vec2, vec3, mat4, radians
-
-// Include all GLM extensions
-#include <glm/ext.hpp> // perspective, translate, rotate
-
 
 
 // VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV Globals VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
@@ -573,9 +571,20 @@ void Input()
       if (e.type == SDL_QUIT)
       {
          // "terminate the program"
-         std::cout << "Goodbye!" << std::endl;
+         std::cout << "Goodbye! (Leaving MainApplicationLoop())" << std::endl;
          gQuit = true;
       }
+   }
+
+   // Retrieve keyboard state
+   const Uint8* state = SDL_GetKeyboardState(NULL);
+   if (state[SDL_SCANCODE_UP])
+   {
+
+   }
+   if (state[SDL_SCANCODE_DOWN])
+   {
+
    }
 }
 /**
